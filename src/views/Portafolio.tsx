@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import type { Proyecto, Trimestre } from '../types'
 import { addDays, diffDays, duracion, fmt, mesCorto, parse, relativo, toIso } from '../lib/dates'
+import { textoActualizacion } from '../lib/actualizacion'
 import { estadoHito, estadoProyecto, hitoAvance, label, proyAvance, rango } from '../lib/status'
 
 const TL_INI = parse('2026-11-01')
@@ -47,7 +48,7 @@ export default function Portafolio({ proyectos, trimestres, hoy }: { proyectos: 
                   <div className="rl" style={{ width: LEFT }}>
                     <button className="c-name name" onClick={() => toggle(p.id)} aria-expanded={open}>
                       <span className={`caret ${open ? 'open' : ''}`} />
-                      <span><b>{p.nombre}</b><small>{p.resp ? `${p.resp} · ` : ''}{p.alcance}{p.provisional ? ' · fechas por validar' : ''}</small></span>
+                      <span><b>{p.nombre}</b><small>{p.resp ? `${p.resp} · ` : ''}{p.alcance}{p.provisional ? ' · fechas por validar' : ''}<span className="upd">Actualizado {textoActualizacion(p.actualizado, p.actualizadoPor)}</span></small></span>
                     </button>
                     <span className="c-team">{p.equipo}</span>
                     <span className="c-av"><Meter v={av} e={est} /></span>
