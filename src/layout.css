@@ -1,0 +1,11 @@
+/* Barra lateral con iconos */
+.shell { display: flex; min-height: 100vh; }
+.shell > .app { flex: 1; min-width: 0; }
+.side { position: sticky; top: 0; height: 100vh; width: 84px; flex: none; background: var(--brand-dark); display: flex; flex-direction: column; align-items: center; padding: 18px 0; gap: 22px; }
+.side nav { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 0 8px; }
+.side button { display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; color: rgba(255,255,255,.72); padding: 10px 4px; border-radius: 12px; font-size: 11px; font-weight: 600; width: 100%; }
+.side button:hover { background: rgba(255,255,255,.1); color: #fff; }
+.side button.on { background: var(--accent); color: var(--brand-dark); }
+.side .out { margin-top: auto; width: calc(100% - 16px); }
+.upd { display: block; margin-top: 1px; font-size: 11.5px; color: var(--muted); }
+@media (max-width: 700px) { .side { width: 64px; } .side button span { display: none; } }
