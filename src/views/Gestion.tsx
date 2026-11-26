@@ -3,6 +3,7 @@ import type { Area, Hito, Perfil, Proyecto, Req } from '../types'
 import { FASES, TRIMESTRES } from '../types'
 import { addDays, diffDays, parse, toIso } from '../lib/dates'
 import * as D from '../lib/datos'
+import { textoActualizacion } from '../lib/actualizacion'
 
 interface Props {
   proyectos: Proyecto[]; areas: Area[]; perfil: Perfil
@@ -23,7 +24,7 @@ function Campo({ value, onCommit, type = 'text', placeholder, disabled, list, mi
 }
 
 export default function Gestion({ proyectos, areas, perfil, recargar, error }: Props) {
-  const puede = (areaId: string) => perfil.rol === 'admin' || (perfil.rol === 'editor' && perfil.area_id === areaId)
+  const puede = (areaId: string) => perfil.rol === 'admin' || (perfil.rol === 'area' && perfil.area_id === areaId)
   const editables = proyectos.filter(p => puede(p.areaId))
   const [sel, setSel] = useState<string | null>(null)
   const [nuevo, setNuevo] = useState(false)
@@ -44,13 +45,10 @@ export default function Gestion({ proyectos, areas, perfil, recargar, error }: P
         <ul>
           {editables.map(x => (
             <li key={x.id}><button className={x.id === sel ? 'on' : ''} onClick={() => { setSel(x.id); setNuevo(false) }}>
-              <b>{x.nombre}</b><small>{x.equipo} · {x.trimestre} · {x.hitos.length} hito(s)</small>
+              <b>{x.nombre}</b><small>{x.equipo} · {x.trimestre} · {x.hitos.length} hito(s)</small><small>Actualizado {textoActualizacion(x.actualizado, x.actualizadoPor)}</small>
             </button></li>
           ))}
         </ul>
-        {perfil.rol === 'admin' && proyectos.length === 0 && (
-          <button className="ghost" onClick={() => act(async () => { const n = await D.importarSemilla(areas); error(`Se cargaron ${n} proyectos iniciales.`) })}>Cargar datos iniciales (portafolio 2027)</button>
-        )}
       </aside>
 
       <div className="panel editor">
@@ -84,7 +82,7 @@ function EditorProyecto({ p, areas, act, onBorrado }: { p: Proyecto; areas: Area
   return (
     <div className="form">
       <div className="lista-head">
-        <h2>{p.nombre}</h2>
+        <div><h2>{p.nombre}</h2><small>Última actualización: {textoActualizacion(p.actualizado, p.actualizadoPor)}</small></div>
         <button className="peligro" onClick={() => { if (confirm(`¿Eliminar "${p.nombre}" con todos sus hitos y requerimientos?`)) act(async () => { await D.borrarProyecto(p.id); onBorrado() }) }}>Eliminar</button>
       </div>
       <label>Nombre<Campo value={p.nombre} onCommit={v => v.trim() && act(() => D.editarProyecto(p.id, { nombre: v.trim() }))} /></label>
