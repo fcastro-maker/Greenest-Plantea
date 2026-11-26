@@ -22,7 +22,7 @@ function meses(PX: number) {
 }
 
 export default function Portafolio({ proyectos, trimestres, hoy }: { proyectos: Proyecto[]; trimestres: Trimestre[]; hoy: Date }) {
-  const [abiertos, setAbiertos] = useState<Set<string>>(new Set(['mig']))
+  const [abiertos, setAbiertos] = useState<Set<string>>(new Set())
   const [zoom, setZoom] = useState<'anio' | 'trim'>('anio')
   const PX = zoom === 'anio' ? PX_ANIO : PX_TRIM
   const x = (iso: string) => diffDays(TL_INI, parse(iso)) * PX
@@ -36,42 +36,7 @@ export default function Portafolio({ proyectos, trimestres, hoy }: { proyectos: 
   const hoyX = x(toIso(hoy))
   const hoyVisible = hoyX >= 0 && hoyX <= TLW
 
-  return (
-    <section className="port">
-      <div className="port-tools">
-        <button onClick={todos}>Expandir todo</button>
-        <button onClick={nada}>Contraer todo</button>
-        <div className="seg" role="group" aria-label="Escala"><button className={zoom === 'anio' ? 'on' : ''} onClick={() => setZoom('anio')}>Todo el periodo</button><button className={zoom === 'trim' ? 'on' : ''} onClick={() => setZoom('trim')}>Detalle</button></div>
-        <span className="hint">Abre un proyecto para ver sus hitos, y un hito para ver sus requerimientos.</span>
-      </div>
-      <div className="scroll" ref={sc}>
-        <div className="grid" style={{ width: LEFT + TLW }}>
-          {/* Cabecera */}
-          <div className="head">
-            <div className="hl" style={{ width: LEFT }}>
-              <span className="c-name">Proyecto / hito</span><span className="c-team">Equipo</span><span className="c-av">Avance</span><span className="c-fin">Fecha objetivo</span><span className="c-dur">Duración</span>
-            </div>
-            <div className="hr" style={{ width: TLW }}>
-              <div className="qrow">
-                {trimestres.map(t => (
-                  <div key={t.id} className="q" style={{ left: x(t.inicio), width: x(t.fin) - x(t.inicio) + PX }}>{t.id}</div>
-                ))}
-              </div>
-              <div className="mrow">
-                {ms.map((m, i) => <div key={i} className="m" style={{ left: m.left, width: m.width }}>{m.label}{m.anio ? ` ${i === 0 ? '26' : '27'}` : ''}</div>)}
-              </div>
-            </div>
-          </div>
-
-          {/* Líneas de mes y hoy */}
-          <div className="gridlines" style={{ left: LEFT, width: TLW }} aria-hidden>
-            {ms.map((m, i) => <i key={i} style={{ left: m.left }} />)}
-            {hoyVisible && <b className="hoy" style={{ left: hoyX }}><span>Hoy</span></b>}
-          </div>
-
-          {/* Filas */}
-          {proyectos.length === 0 && <p className="vacio">No hay proyectos con estos filtros.</p>}
-          {proyectos.map(p => {
+  const renderProyecto = (p: Proyecto) => {
             const est = estadoProyecto(p, hoy)
             const av = proyAvance(p)
             const r = rango(p)
@@ -113,7 +78,7 @@ export default function Portafolio({ proyectos, trimestres, hoy }: { proyectos: 
                         <div className="rl" style={{ width: LEFT }}>
                           <button className="c-name name" onClick={() => tiene && toggle(h.id)} disabled={!tiene} aria-expanded={hopen}>
                             <span className={`caret ${hopen ? 'open' : ''} ${tiene ? '' : 'none'}`} />
-                            <span>{h.nombre}{tiene && <small>{h.reqs.filter(q => q.hecho).length} de {h.reqs.length} requerimientos</small>}</span>
+                            <span>{h.nombre}{(h.fase || tiene) && <small>{[h.fase, tiene ? `${h.reqs.filter(q => q.hecho).length} de ${h.reqs.length} requerimientos` : ''].filter(Boolean).join(' · ')}</small>}</span>
                           </button>
                           <span className="c-team" />
                           <span className="c-av"><Meter v={ah} e={eh} thin /></span>
@@ -131,11 +96,11 @@ export default function Portafolio({ proyectos, trimestres, hoy }: { proyectos: 
                             <span className="c-name name"><span className={`check ${q.hecho ? 'ok' : ''}`} aria-label={q.hecho ? 'Hecho' : 'Pendiente'} /><span className="txt" title={q.nombre}>{q.nombre}</span></span>
                             <span className="c-team">{q.resp}</span>
                             <span className="c-av" />
-                            <span className="c-fin">{fmt(q.fin)}</span>
-                            <span className="c-dur">{duracion(q.inicio, q.fin)}</span>
+                            <span className="c-fin">{q.fin ? fmt(q.fin) : '—'}</span>
+                            <span className="c-dur">{q.inicio && q.fin ? duracion(q.inicio, q.fin) : '—'}</span>
                           </div>
                           <div className="rr" style={{ width: TLW }}>
-                            <div className={`tbar sm ${q.hecho ? 'completado' : 'req'}`} style={{ left: x(q.inicio), width: Math.max(6, x(q.fin) - x(q.inicio) + PX) }} />
+                            {q.inicio && q.fin && <div className={`tbar sm ${q.hecho ? 'completado' : 'req'}`} style={{ left: x(q.inicio), width: Math.max(6, x(q.fin) - x(q.inicio) + PX) }} />}
                           </div>
                         </div>
                       ))}
@@ -144,7 +109,57 @@ export default function Portafolio({ proyectos, trimestres, hoy }: { proyectos: 
                 })}
               </Fragment>
             )
+  }
+
+  return (
+    <section className="port">
+      <div className="port-tools">
+        <button onClick={todos}>Expandir todo</button>
+        <button onClick={nada}>Contraer todo</button>
+        <div className="seg" role="group" aria-label="Escala"><button className={zoom === 'anio' ? 'on' : ''} onClick={() => setZoom('anio')}>Todo el periodo</button><button className={zoom === 'trim' ? 'on' : ''} onClick={() => setZoom('trim')}>Detalle</button></div>
+        <span className="hint">Abre un proyecto para ver sus hitos, y un hito para ver sus requerimientos.</span>
+      </div>
+      <div className="scroll" ref={sc}>
+        <div className="grid" style={{ width: LEFT + TLW }}>
+          {/* Cabecera */}
+          <div className="head">
+            <div className="hl" style={{ width: LEFT }}>
+              <span className="c-name">Proyecto / hito</span><span className="c-team">Área</span><span className="c-av">Avance</span><span className="c-fin">Fecha objetivo</span><span className="c-dur">Duración</span>
+            </div>
+            <div className="hr" style={{ width: TLW }}>
+              <div className="qrow">
+                {trimestres.map(t => (
+                  <div key={t.id} className="q" style={{ left: x(t.inicio), width: x(t.fin) - x(t.inicio) + PX }}>{t.id}</div>
+                ))}
+              </div>
+              <div className="mrow">
+                {ms.map((m, i) => <div key={i} className="m" style={{ left: m.left, width: m.width }}>{m.label}{m.anio ? ` ${i === 0 ? '26' : '27'}` : ''}</div>)}
+              </div>
+            </div>
+          </div>
+
+          {/* Líneas de mes y hoy */}
+          <div className="gridlines" style={{ left: LEFT, width: TLW }} aria-hidden>
+            {ms.map((m, i) => <i key={i} style={{ left: m.left }} />)}
+            {hoyVisible && <b className="hoy" style={{ left: hoyX }}><span>Hoy</span></b>}
+          </div>
+
+          {/* Filas */}
+          {proyectos.length === 0 && <p className="vacio">Todavía no hay proyectos con estos filtros. Las áreas los suben desde el menú Gestión.</p>}
+          {trimestres.map(t => {
+            const ps = proyectos.filter(p => p.trimestre === t.id)
+            if (!ps.length) return null
+            return (
+              <Fragment key={t.id}>
+                <div className="row qg">
+                  <div className="rl" style={{ width: LEFT }}><b>{t.id}</b><small>{fmt(t.inicio)} – {fmt(t.fin)} · {ps.length} {ps.length === 1 ? 'proyecto' : 'proyectos'}</small></div>
+                  <div className="rr" style={{ width: TLW }}><div className="qband" style={{ left: x(t.inicio), width: x(t.fin) - x(t.inicio) + PX }} /></div>
+                </div>
+                {ps.map(renderProyecto)}
+              </Fragment>
+            )
           })}
+
         </div>
       </div>
     </section>
