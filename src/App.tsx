@@ -11,13 +11,14 @@ import Calendario from './views/Calendario'
 import Gestion from './views/Gestion'
 import Usuarios from './views/Usuarios'
 import Resumen from './views/Resumen'
+import Carga from './views/Carga'
 import Comparativo from './views/Comparativo'
 import Login from './views/Login'
-import { IconCalendario, IconComparativo, IconGestion, IconPortafolio, IconResumen, IconSalir, IconUsuarios } from './views/Iconos'
+import { IconCalendario, IconCarga, IconComparativo, IconGestion, IconPortafolio, IconResumen, IconSalir, IconUsuarios } from './views/Iconos'
 
 // Nombre de la plataforma: se cambia solo aquí.
 const NOMBRE = 'Plantea'
-type Vista = 'resumen' | 'portafolio' | 'comparativo' | 'calendario' | 'gestion' | 'usuarios'
+type Vista = 'resumen' | 'portafolio' | 'comparativo' | 'carga' | 'calendario' | 'gestion' | 'usuarios'
 
 export default function App() {
   const [sesion, setSesion] = useState<Session | null>(null)
@@ -71,6 +72,7 @@ function Plataforma({ userId, correo }: { userId: string; correo: string }) {
     { id: 'resumen', t: 'Resumen', i: <IconResumen /> },
     { id: 'portafolio', t: 'Portafolio', i: <IconPortafolio /> },
     { id: 'comparativo', t: 'Comparativo', i: <IconComparativo /> },
+    { id: 'carga', t: 'Carga', i: <IconCarga /> },
     { id: 'calendario', t: 'Calendario', i: <IconCalendario /> },
     ...(gerencia ? [] : [{ id: 'gestion' as Vista, t: 'Gestión', i: <IconGestion /> }]),
     ...(admin ? [{ id: 'usuarios' as Vista, t: 'Usuarios', i: <IconUsuarios /> }] : []),
@@ -129,6 +131,7 @@ function Plataforma({ userId, correo }: { userId: string; correo: string }) {
 
       <main>
         {vista === 'resumen' && <Resumen proyectos={visibles} areas={areas} perfil={perfil} hoy={hoy} alDia={alDia} />}
+        {vista === 'carga' && <Carga proyectos={visibles} hoy={hoy} />}
         {vista === 'comparativo' && <Comparativo proyectos={soloArea} areas={areas} hoy={hoy} verAreas={verAreas} />}
         {vista === 'portafolio' && <Portafolio proyectos={visibles} trimestres={TRIMESTRES} hoy={hoy} />}
         {vista === 'calendario' && <Calendario proyectos={visibles} hoy={hoy} />}
