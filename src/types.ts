@@ -7,11 +7,17 @@ export interface Proyecto {
   provisional?: boolean
   /** Avance manual 0-100. Si falta, se calcula con los requerimientos de los hitos */
   avance?: number
+  /** Última modificación del proyecto, de sus hitos o de sus requerimientos */
+  actualizado?: string; actualizadoPor?: string
   hitos: Hito[]
 }
 export interface Trimestre { id: string; inicio: string; fin: string }
 export interface Area { id: string; nombre: string }
-export type Rol = 'admin' | 'editor' | 'lector'
+/** admin: todo · area: solo su área interna · gerencia: ve todos los planes, sin editar */
+export type Rol = 'admin' | 'area' | 'gerencia'
+export const ROLES: { id: Rol; t: string }[] = [
+  { id: 'area', t: 'Área interna' }, { id: 'gerencia', t: 'Gerencia' }, { id: 'admin', t: 'Administrador' },
+]
 export interface Perfil { id: string; correo: string; nombre: string | null; area_id: string | null; rol: Rol; activo: boolean }
 export type Estado = 'completado' | 'en-curso' | 'en-riesgo' | 'atrasado' | 'por-iniciar' | 'por-programar'
 
