@@ -32,6 +32,7 @@ export async function cargarProyectos(areas: Area[]): Promise<Proyecto[]> {
     id: p.id, nombre: p.nombre, areaId: p.area_id, equipo: nombreArea.get(p.area_id) ?? '—',
     resp: p.responsable ?? '', alcance: p.alcance, trimestre: p.trimestre, nota: p.nota ?? undefined,
     provisional: p.provisional, avance: p.avance ?? undefined,
+    actualizado: p.actualizado_en ?? undefined, actualizadoPor: p.actualizado_por ?? undefined,
     hitos: [...(p.hitos ?? [])]
       .sort((a: any, b: any) => a.orden - b.orden || (a.inicio ?? '').localeCompare(b.inicio ?? ''))
       .map((h: any): Hito => ({
@@ -78,29 +79,3 @@ export async function editarReq(id: string, c: { nombre?: string; resp?: string;
   ok(await supabase.from('requerimientos').update(cambios).eq('id', id).select('id'))
 }
 export async function borrarReq(id: string) { ok(await supabase.from('requerimientos').delete().eq('id', id).select('id')) }
-
-/** Carga inicial desde src/data/portfolio.json (solo admin). Devuelve cuántos proyectos creó. */
-export async function importarSemilla(areas: Area[]): Promise<number> {
-  const seed: any = (await import('../data/portfolio.json')).default
-  const porNombre = new Map(areas.map(a => [a.nombre, a.id]))
-  const ti = porNombre.get('TI')!
-  let n = 0
-  for (const p of seed.proyectos) {
-    const q = /Q\d/.exec(p.trimestre)?.[0] ?? 'Q1'
-    const nota = [p.nota, p.trimestre !== q ? `Abarca ${p.trimestre}` : ''].filter(Boolean).join(' · ')
-    const pr: any = ok(await supabase.from('proyectos').insert({
-      area_id: porNombre.get(p.equipo) ?? ti, nombre: p.nombre, responsable: nul(p.resp), alcance: p.alcance,
-      trimestre: q, nota: nul(nota), provisional: !!p.provisional, avance: p.avance ?? null,
-    }).select('id').single())
-    const hs: any[] = ok(await supabase.from('hitos').insert(p.hitos.map((h: any, i: number) => ({
-      proyecto_id: pr.id, nombre: h.nombre, inicio: nul(h.inicio), fin: nul(h.fin), hecho: !!h.hecho, orden: i,
-    }))).select('id,orden')) ?? []
-    hs.sort((a, b) => a.orden - b.orden)
-    const reqs = p.hitos.flatMap((h: any, i: number) => (h.reqs ?? []).map((r: any) => ({
-      hito_id: hs[i].id, nombre: r.nombre, responsable: nul(r.resp), inicio: nul(r.inicio), fin: nul(r.fin), hecho: !!r.hecho,
-    })))
-    if (reqs.length) ok(await supabase.from('requerimientos').insert(reqs).select('id'))
-    n++
-  }
-  return n
-}
