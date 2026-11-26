@@ -142,7 +142,8 @@ export default function Resumen({ proyectos, areas, perfil, hoy, alDia }: Props)
             <li key={f.p.id}>
               <i className={`dot ${f.estado}`} />
               <div><b>{f.p.nombre}</b>{verAreas && <small className="inl"> · {f.p.equipo}</small>}
-                <small>{label(f.estado)}{f.hito ? ` · ${f.hito.nombre}, vence ${fmt(f.hito.fin)} (${relativo(f.hito.fin, hoy)})` : ''}</small></div>
+                <small>{label(f.estado)}{f.hito ? ` · ${f.hito.nombre}, vence ${fmt(f.hito.fin)} (${relativo(f.hito.fin, hoy)})` : ''}</small>
+                {f.motivos.map((m, k) => <small key={k} className="mot-linea">{m}</small>)}</div>
             </li>
           )} />
         </div>
