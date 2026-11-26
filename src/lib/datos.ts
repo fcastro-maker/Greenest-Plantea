@@ -79,3 +79,8 @@ export async function editarReq(id: string, c: { nombre?: string; resp?: string;
   ok(await supabase.from('requerimientos').update(cambios).eq('id', id).select('id'))
 }
 export async function borrarReq(id: string) { ok(await supabase.from('requerimientos').delete().eq('id', id).select('id')) }
+
+/** "Está al día": registra que el plan se revisó sin cambios (el sello de actualización lo pone la base de datos) */
+export async function confirmarAlDia(id: string, trimestre: string) {
+  ok(await supabase.from('proyectos').update({ trimestre }).eq('id', id).select('id'))
+}
