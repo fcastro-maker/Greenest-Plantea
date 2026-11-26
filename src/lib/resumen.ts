@@ -1,6 +1,6 @@
 import type { Estado, Hito, Proyecto } from '../types'
 import { addDays, diffDays, parse, toIso } from './dates'
-import { estadoHito, estadoProyecto, hitoAvance, proyAvance, rango } from './status'
+import { bloqueos, dependenciasEnRiesgo, estadoHito, estadoProyecto, hitoAvance, proyAvance, rango } from './status'
 
 /** Días sin tocar un plan antes de pedir que se actualice */
 export const DIAS_SIN_ACTUALIZAR = 14
@@ -15,6 +15,8 @@ export interface Fila {
   /** Hito pendiente más cercano a vencer (o ya vencido) */
   hito?: Hito
   diasSin: number | null
+  /** Por qué necesita atención: bloqueos y dependencias en problemas */
+  motivos: string[]
 }
 
 const pendiente = (h: Hito) => h.hecho !== true && hitoAvance(h) !== 100
@@ -26,6 +28,10 @@ export function filas(proyectos: Proyecto[], hoy: Date): Fila[] {
     return {
       p, estado: estadoProyecto(p, hoy), avance: proyAvance(p), inicio: r?.inicio, fin: r?.fin, hito,
       diasSin: p.actualizado ? Math.floor((hoy.getTime() - new Date(p.actualizado).getTime()) / 86400000) : null,
+      motivos: [
+        ...bloqueos(p).map(h => `Bloqueado · ${h.nombre}${h.motivoBloqueo ? `: ${h.motivoBloqueo}` : ''}`),
+        ...dependenciasEnRiesgo(p).map(d => `Depende de «${d.nombre}» (${d.area}), que está ${d.bloqueado ? 'bloqueado' : 'atrasado'}`),
+      ],
     }
   })
 }
@@ -79,3 +85,31 @@ export function requerimientosPendientes(proyectos: Proyecto[], hoy: Date, venta
 
 export const hitoEstado = (h: Hito, hoy: Date) => estadoHito(h, hoy)
 export { toIso }
+
+export interface CargaResp {
+  resp: string
+  vencidos: number; semana: number; mes: number; abiertos: number
+  items: { nombre: string; proyecto: string; fin: string; dias: number }[]
+}
+/** Requerimientos abiertos por responsable: vencidos, de esta semana (7 d) y del resto del mes (hasta 30 d) */
+export function cargaPorResponsable(proyectos: Proyecto[], hoy: Date): CargaResp[] {
+  const m = new Map<string, CargaResp>()
+  for (const p of proyectos) for (const h of p.hitos) for (const r of h.reqs) {
+    if (r.hecho) continue
+    const clave = r.resp.trim() || 'Sin responsable'
+    const c = m.get(clave) ?? { resp: clave, vencidos: 0, semana: 0, mes: 0, abiertos: 0, items: [] }
+    const dias = r.fin ? diffDays(hoy, parse(r.fin)) : null
+    c.abiertos++
+    if (dias !== null) {
+      if (dias < 0) c.vencidos++
+      else if (dias <= 7) c.semana++
+      else if (dias <= 30) c.mes++
+    }
+    c.items.push({ nombre: r.nombre, proyecto: p.nombre, fin: r.fin, dias: dias ?? 9999 })
+    m.set(clave, c)
+  }
+  const out = [...m.values()]
+  for (const c of out) c.items.sort((a, b) => a.dias - b.dias)
+  // Quien más urgente tiene, primero; "Sin responsable" siempre visible al final de empates
+  return out.sort((a, b) => (b.vencidos * 100 + b.semana * 10 + b.mes) - (a.vencidos * 100 + a.semana * 10 + a.mes) || b.abiertos - a.abiertos)
+}
