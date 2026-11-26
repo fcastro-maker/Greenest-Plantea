@@ -11,6 +11,7 @@ import Calendario from './views/Calendario'
 import Gestion from './views/Gestion'
 import Usuarios from './views/Usuarios'
 import Login from './views/Login'
+import { IconCalendario, IconGestion, IconPortafolio, IconSalir, IconUsuarios } from './views/Iconos'
 
 // Nombre de la plataforma: se cambia solo aquí.
 const NOMBRE = 'Plantea'
@@ -63,42 +64,57 @@ function Plataforma({ userId, correo }: { userId: string; correo: string }) {
 
   const admin = perfil.rol === 'admin'
   const visibles = proyectos.filter(p => (area === 'Todas' || p.equipo === area) && (trim === 'Todos' || p.trimestre === trim))
-  const menu: { id: Vista; t: string }[] = [
-    { id: 'portafolio', t: 'Portafolio' }, { id: 'calendario', t: 'Calendario' }, { id: 'gestion', t: 'Gestión' },
-    ...(admin ? [{ id: 'usuarios' as Vista, t: 'Usuarios' }] : []),
+  const gerencia = perfil.rol === 'gerencia'
+  const menu: { id: Vista; t: string; i: JSX.Element }[] = [
+    { id: 'portafolio', t: 'Portafolio', i: <IconPortafolio /> },
+    { id: 'calendario', t: 'Calendario', i: <IconCalendario /> },
+    ...(gerencia ? [] : [{ id: 'gestion' as Vista, t: 'Gestión', i: <IconGestion /> }]),
+    ...(admin ? [{ id: 'usuarios' as Vista, t: 'Usuarios', i: <IconUsuarios /> }] : []),
   ]
+  const rolTexto = admin ? 'Administrador' : gerencia ? 'Gerencia' : 'Área interna'
+  const verAreas = admin || gerencia
   const filtros = vista === 'portafolio' || vista === 'calendario'
   const miArea = areas.find(a => a.id === perfil.area_id)?.nombre
 
   return (
-    <div className="app">
-      <header className="top">
-        <div className="brand">
-          <span className="mark" aria-hidden />
-          <div><h1>{NOMBRE}</h1><p>Green Initiative · Portafolio por áreas · {fmtLargo(toIso(hoy))}</p></div>
-        </div>
-        <nav className="tabs" aria-label="Menú">
-          {menu.map(m => <button key={m.id} className={vista === m.id ? 'on' : ''} onClick={() => setVista(m.id)}>{m.t}</button>)}
+    <div className="shell">
+      <aside className="side">
+        <span className="mark" aria-hidden title={NOMBRE} />
+        <nav aria-label="Menú">
+          {menu.map(m => (
+            <button key={m.id} className={vista === m.id ? 'on' : ''} onClick={() => setVista(m.id)} title={m.t} aria-label={m.t} aria-current={vista === m.id ? 'page' : undefined}>
+              {m.i}<span>{m.t}</span>
+            </button>
+          ))}
         </nav>
-        <div className="yo">
-          <span>{perfil.nombre || correo}<small>{admin ? 'Administrador' : perfil.rol === 'lector' ? 'Solo lectura' : 'Editor'}{miArea ? ` · ${miArea}` : ''}</small></span>
-          <button className="ghost" onClick={salir}>Salir</button>
-        </div>
-      </header>
+        <button className="out" onClick={salir} title="Salir" aria-label="Salir">{<IconSalir />}<span>Salir</span></button>
+      </aside>
 
-      {filtros && (
-        <div className="filtros">
-          <label>Área
-            <select value={area} onChange={e => setArea(e.target.value)}>{['Todas', ...areas.map(a => a.nombre)].map(e => <option key={e}>{e}</option>)}</select>
-          </label>
-          <label>Trimestre
-            <select value={trim} onChange={e => setTrim(e.target.value)}>{['Todos', ...TRIMESTRES.map(t => t.id)].map(e => <option key={e}>{e}</option>)}</select>
-          </label>
-          <ul className="legend" aria-label="Leyenda de estados">
-            {ESTADOS.map(e => <li key={e.id}><i className={`dot ${e.id}`} />{e.label}</li>)}
-          </ul>
-        </div>
-      )}
+      <div className="app">
+        <header className="top">
+          <div className="brand">
+            <div><h1>{NOMBRE}</h1><p>Green Initiative · Portafolio por áreas · {fmtLargo(toIso(hoy))}</p></div>
+          </div>
+          <div className="yo">
+            <span>{perfil.nombre || correo}<small>{rolTexto}{miArea ? ` · ${miArea}` : ''}</small></span>
+          </div>
+        </header>
+
+        {filtros && (
+          <div className="filtros">
+            {verAreas && (
+              <label>Área
+                <select value={area} onChange={e => setArea(e.target.value)}>{['Todas', ...areas.map(a => a.nombre)].map(e => <option key={e}>{e}</option>)}</select>
+              </label>
+            )}
+            <label>Trimestre
+              <select value={trim} onChange={e => setTrim(e.target.value)}>{['Todos', ...TRIMESTRES.map(t => t.id)].map(e => <option key={e}>{e}</option>)}</select>
+            </label>
+            <ul className="legend" aria-label="Leyenda de estados">
+              {ESTADOS.map(e => <li key={e.id}><i className={`dot ${e.id}`} />{e.label}</li>)}
+            </ul>
+          </div>
+        )}
 
       <main>
         {vista === 'portafolio' && <Portafolio proyectos={visibles} trimestres={TRIMESTRES} hoy={hoy} />}
@@ -107,6 +123,7 @@ function Plataforma({ userId, correo }: { userId: string; correo: string }) {
         {vista === 'usuarios' && admin && <Usuarios perfiles={perfiles} areas={areas} yo={perfil.id} recargar={recargar} error={setAviso} />}
       </main>
       {aviso && <div className="toast" role="status" onClick={() => setAviso(null)}>{aviso}</div>}
+      </div>
     </div>
   )
 }
