@@ -1,5 +1,8 @@
 export interface Req { id: string; nombre: string; resp: string; inicio: string; fin: string; hecho: boolean }
-export interface Hito { id: string; nombre: string; fase: string; inicio: string; fin: string; hecho?: boolean; reqs: Req[] }
+export interface Hito { id: string; nombre: string; fase: string; inicio: string; fin: string; hecho?: boolean; bloqueado?: boolean; motivoBloqueo?: string; reqs: Req[] }
+/** Proyecto del que depende otro, con su situación hoy */
+export interface Dependencia { id: string; nombre: string; area: string; atrasado: boolean; bloqueado: boolean; completado: boolean }
+export interface Cambio { id: string; entidad: 'proyecto' | 'hito' | 'requerimiento'; nombre: string | null; campo: string; antes: string | null; despues: string | null; motivo: string | null; por: string | null; creado_en: string }
 export interface Proyecto {
   id: string; nombre: string; equipo: string; areaId: string; resp: string
   alcance: 'Interno' | 'Externo'; trimestre: string; nota?: string
@@ -9,6 +12,8 @@ export interface Proyecto {
   avance?: number
   /** Última modificación del proyecto, de sus hitos o de sus requerimientos */
   actualizado?: string; actualizadoPor?: string
+  /** Proyectos de los que depende (si alguno se atrasa o se bloquea, este queda en riesgo) */
+  depende?: Dependencia[]
   hitos: Hito[]
 }
 export interface Trimestre { id: string; inicio: string; fin: string }
