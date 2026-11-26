@@ -52,7 +52,7 @@ export default function Gestion({ proyectos, areas, perfil, recargar, error }: P
       </aside>
 
       <div className="panel editor">
-        {nuevo && <FormNuevo areas={areasPermitidas} onCancel={() => setNuevo(false)} onCrear={d => act(async () => { const id = await D.crearProyecto(d); setNuevo(false); setSel(id) })} />}
+        {nuevo && <FormNuevo areas={areasPermitidas} onCancel={() => setNuevo(false)} onCrear={d => act(async () => { const id = await D.crearProyecto({ area_id: d.area_id, nombre: d.nombre, trimestre: d.trimestre }); if (d.fases) for (let i = 0; i < FASES.length; i++) await D.crearHito({ proyecto_id: id, nombre: FASES[i], fase: FASES[i], orden: i }); setNuevo(false); setSel(id) })} />}
         {!nuevo && !p && <p className="sub">Elige un proyecto de la lista o crea uno nuevo.</p>}
         {!nuevo && p && <EditorProyecto key={p.id} p={p} areas={areasPermitidas} act={act} onBorrado={() => setSel(null)} />}
       </div>
@@ -60,18 +60,20 @@ export default function Gestion({ proyectos, areas, perfil, recargar, error }: P
   )
 }
 
-function FormNuevo({ areas, onCrear, onCancel }: { areas: Area[]; onCrear: (d: { area_id: string; nombre: string; trimestre: string }) => void; onCancel: () => void }) {
+function FormNuevo({ areas, onCrear, onCancel }: { areas: Area[]; onCrear: (d: { area_id: string; nombre: string; trimestre: string; fases: boolean }) => void; onCancel: () => void }) {
   const [area, setArea] = useState(areas[0]?.id ?? '')
   const [nombre, setNombre] = useState('')
   const [q, setQ] = useState('Q1')
+  const [fases, setFases] = useState(true)
   return (
-    <form className="form" onSubmit={e => { e.preventDefault(); if (nombre.trim() && area) onCrear({ area_id: area, nombre: nombre.trim(), trimestre: q }) }}>
+    <form className="form" onSubmit={e => { e.preventDefault(); if (nombre.trim() && area) onCrear({ area_id: area, nombre: nombre.trim(), trimestre: q, fases }) }}>
       <h2>Nuevo proyecto</h2>
       <label>Nombre<input value={nombre} onChange={e => setNombre(e.target.value)} autoFocus required /></label>
       <div className="dos">
         <label>Área<select value={area} onChange={e => setArea(e.target.value)}>{areas.map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}</select></label>
         <label>Trimestre<select value={q} onChange={e => setQ(e.target.value)}>{TRIMESTRES.map(t => <option key={t.id}>{t.id}</option>)}</select></label>
       </div>
+      <label className="check-l"><input type="checkbox" checked={fases} onChange={e => setFases(e.target.checked)} /> Empezar con las 6 fases estándar ({FASES.join(', ')}) para completar solo las fechas</label>
       <div className="acciones"><button type="button" className="ghost" onClick={onCancel}>Cancelar</button><button className="primary">Crear y continuar</button></div>
     </form>
   )
