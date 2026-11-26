@@ -4,6 +4,8 @@ import { FASES, TRIMESTRES } from '../types'
 import { addDays, diffDays, parse, toIso } from '../lib/dates'
 import * as D from '../lib/datos'
 import { textoActualizacion } from '../lib/actualizacion'
+import Importar from './Importar'
+import { Dependencias, Duplicar, Historial } from './PanelProyecto'
 
 interface Props {
   proyectos: Proyecto[]; areas: Area[]; perfil: Perfil
@@ -11,14 +13,14 @@ interface Props {
 }
 
 function Campo({ value, onCommit, type = 'text', placeholder, disabled, list, min, className }: {
-  value: string; onCommit: (v: string) => void; type?: string; placeholder?: string; disabled?: boolean; list?: string; min?: number; className?: string
+  value: string; onCommit: (v: string) => unknown; type?: string; placeholder?: string; disabled?: boolean; list?: string; min?: number; className?: string
 }) {
   const [v, setV] = useState(value)
   useEffect(() => setV(value), [value])
   return (
     <input className={className} type={type} value={v} placeholder={placeholder} disabled={disabled} list={list} min={min}
       onChange={e => setV(e.target.value)}
-      onBlur={() => { if (v !== value) onCommit(v) }}
+      onBlur={() => { if (v !== value && onCommit(v) === false) setV(value) }}
       onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }} />
   )
 }
@@ -28,6 +30,7 @@ export default function Gestion({ proyectos, areas, perfil, recargar, error }: P
   const editables = proyectos.filter(p => puede(p.areaId))
   const [sel, setSel] = useState<string | null>(null)
   const [nuevo, setNuevo] = useState(false)
+  const [importando, setImportando] = useState(false)
   const act = async (fn: () => Promise<void>) => { try { await fn(); await recargar() } catch (e) { error((e as Error).message) } }
   const p = proyectos.find(x => x.id === sel) ?? null
   const areasPermitidas = perfil.rol === 'admin' ? areas : areas.filter(a => a.id === perfil.area_id)
@@ -38,13 +41,13 @@ export default function Gestion({ proyectos, areas, perfil, recargar, error }: P
       <aside className="panel lista">
         <div className="lista-head">
           <h2>{perfil.rol === 'admin' ? 'Todos los proyectos' : 'Proyectos de tu área'}</h2>
-          {puedeCrear && <button className="primary" onClick={() => { setNuevo(true); setSel(null) }}>+ Proyecto</button>}
+          {puedeCrear && <div className="acciones"><button className="ghost" onClick={() => { setImportando(true); setNuevo(false); setSel(null) }}>Importar</button><button className="primary" onClick={() => { setNuevo(true); setImportando(false); setSel(null) }}>+ Proyecto</button></div>}
         </div>
         {!puedeCrear && <p className="sub">Tu cuenta aún no tiene un área asignada. Pídele a un administrador que te la asigne para poder subir proyectos.</p>}
         {editables.length === 0 && puedeCrear && <p className="sub">Todavía no hay proyectos. Crea el primero.</p>}
         <ul>
           {editables.map(x => (
-            <li key={x.id}><button className={x.id === sel ? 'on' : ''} onClick={() => { setSel(x.id); setNuevo(false) }}>
+            <li key={x.id}><button className={x.id === sel ? 'on' : ''} onClick={() => { setSel(x.id); setNuevo(false); setImportando(false) }}>
               <b>{x.nombre}</b><small>{x.equipo} · {x.trimestre} · {x.hitos.length} hito(s)</small><small>Actualizado {textoActualizacion(x.actualizado, x.actualizadoPor)}</small>
             </button></li>
           ))}
@@ -53,8 +56,9 @@ export default function Gestion({ proyectos, areas, perfil, recargar, error }: P
 
       <div className="panel editor">
         {nuevo && <FormNuevo areas={areasPermitidas} onCancel={() => setNuevo(false)} onCrear={d => act(async () => { const id = await D.crearProyecto({ area_id: d.area_id, nombre: d.nombre, trimestre: d.trimestre }); if (d.fases) for (let i = 0; i < FASES.length; i++) await D.crearHito({ proyecto_id: id, nombre: FASES[i], fase: FASES[i], orden: i }); setNuevo(false); setSel(id) })} />}
-        {!nuevo && !p && <p className="sub">Elige un proyecto de la lista o crea uno nuevo.</p>}
-        {!nuevo && p && <EditorProyecto key={p.id} p={p} areas={areasPermitidas} act={act} onBorrado={() => setSel(null)} />}
+        {importando && <Importar areas={areasPermitidas} error={error} onCancel={() => setImportando(false)} onListo={n => { setImportando(false); error(`Se importaron ${n} proyecto(s).`); recargar() }} />}
+        {!nuevo && !importando && !p && <p className="sub">Elige un proyecto de la lista o crea uno nuevo.</p>}
+        {!nuevo && !importando && p && <EditorProyecto key={p.id} p={p} areas={areasPermitidas} act={act} onBorrado={() => setSel(null)} onCreado={id => setSel(id)} />}
       </div>
     </section>
   )
@@ -79,7 +83,7 @@ function FormNuevo({ areas, onCrear, onCancel }: { areas: Area[]; onCrear: (d: {
   )
 }
 
-function EditorProyecto({ p, areas, act, onBorrado }: { p: Proyecto; areas: Area[]; act: (fn: () => Promise<void>) => Promise<void>; onBorrado: () => void }) {
+function EditorProyecto({ p, areas, act, onBorrado, onCreado }: { p: Proyecto; areas: Area[]; act: (fn: () => Promise<void>) => Promise<void>; onBorrado: () => void; onCreado: (id: string) => void }) {
   const [verAv, setVerAv] = useState(false)
   return (
     <div className="form">
@@ -107,33 +111,58 @@ function EditorProyecto({ p, areas, act, onBorrado }: { p: Proyecto; areas: Area
       <datalist id="fases">{FASES.map(f => <option key={f} value={f} />)}</datalist>
       {p.hitos.length === 0 && <p className="sub">Agrega los hitos del proyecto con su fase, fecha de inicio y duración.</p>}
       {p.hitos.map(h => <FilaHito key={h.id} h={h} act={act} />)}
+
+      <Dependencias p={p} act={act} />
+      <Historial p={p} />
+      <div className="bloque-ed"><h3>Plantilla</h3><Duplicar p={p} act={act} onCreado={onCreado} /></div>
     </div>
   )
 }
 
+/** Pide el motivo cuando se mueve una fecha de fin ya fijada. null = el usuario canceló. */
+function pedirMotivo(nombre: string, antes: string, despues: string): string | null {
+  if (!antes || antes === despues) return ''
+  return window.prompt(`Cambias el fin de «${nombre}» de ${antes} a ${despues || 'sin fecha'}.\n¿Por qué? (motivo corto)`, '')
+}
+
 function FilaHito({ h, act }: { h: Hito; act: (fn: () => Promise<void>) => Promise<void> }) {
   const dias = h.inicio && h.fin ? diffDays(parse(h.inicio), parse(h.fin)) + 1 : null
+  const cambiarFin = (inicio: string | undefined, fin: string) => {
+    const motivo = pedirMotivo(h.nombre, h.fin, fin)
+    if (motivo === null) return false
+    act(() => D.editarHito(h.id, { ...(inicio !== undefined ? { inicio } : {}), fin, ...(motivo ? { motivo_cambio: motivo } : {}) }))
+  }
   const mover = (inicio: string) => {
-    if (!inicio) return act(() => D.editarHito(h.id, { inicio: '' }))
+    if (!inicio) { act(() => D.editarHito(h.id, { inicio: '' })); return }
     const fin = dias && h.inicio ? toIso(addDays(parse(inicio), dias - 1)) : h.fin
-    return act(() => D.editarHito(h.id, { inicio, fin: fin && fin >= inicio ? fin : '' }))
+    return cambiarFin(inicio, fin && fin >= inicio ? fin : '')
   }
   const durar = (v: string) => {
     const n = Math.max(1, Math.floor(Number(v) || 0))
-    if (!h.inicio || !n) return
-    return act(() => D.editarHito(h.id, { fin: toIso(addDays(parse(h.inicio), n - 1)) }))
+    if (!h.inicio || !n) return false
+    return cambiarFin(undefined, toIso(addDays(parse(h.inicio), n - 1)))
   }
   return (
-    <div className="hito-ed">
+    <div className={`hito-ed ${h.bloqueado ? 'bloqueado' : ''}`}>
       <div className="fila-h">
         <Campo className="nom" value={h.nombre} onCommit={v => v.trim() && act(() => D.editarHito(h.id, { nombre: v.trim() }))} />
         <Campo className="fase" list="fases" placeholder="Fase" value={h.fase} onCommit={v => act(() => D.editarHito(h.id, { fase: v }))} />
         <label>Inicio<Campo type="date" value={h.inicio} onCommit={mover} /></label>
         <label>Días<Campo type="number" min={1} className="num" value={dias ? String(dias) : ''} onCommit={durar} /></label>
-        <label>Fin<Campo type="date" value={h.fin} onCommit={v => act(() => D.editarHito(h.id, { fin: v }))} /></label>
+        <label>Fin<Campo type="date" value={h.fin} onCommit={v => cambiarFin(undefined, v)} /></label>
         <label className="check-l"><input type="checkbox" checked={!!h.hecho} onChange={e => act(() => D.editarHito(h.id, { hecho: e.target.checked }))} /> Listo</label>
+        <label className="check-l"><input type="checkbox" checked={!!h.bloqueado} onChange={e => {
+          if (!e.target.checked) { act(() => D.editarHito(h.id, { bloqueado: false, motivo_bloqueo: '' })); return }
+          const m = window.prompt(`¿Por qué está bloqueado «${h.nombre}»? (ej.: esperando a TI, sin presupuesto)`, '')
+          if (m !== null && m.trim()) act(() => D.editarHito(h.id, { bloqueado: true, motivo_bloqueo: m.trim() }))
+        }} /> Bloqueado</label>
         <button className="x" title="Eliminar hito" onClick={() => { if (confirm(`¿Eliminar el hito "${h.nombre}"?`)) act(() => D.borrarHito(h.id)) }}>✕</button>
       </div>
+      {h.bloqueado && (
+        <div className="bloqueo"><b>Motivo:</b>
+          <Campo className="mot-in" value={h.motivoBloqueo ?? ''} placeholder="Escribe por qué está bloqueado" onCommit={v => v.trim() && act(() => D.editarHito(h.id, { motivo_bloqueo: v.trim() }))} />
+        </div>
+      )}
       {h.reqs.map(r => <FilaReq key={r.id} r={r} act={act} />)}
       <button className="link" onClick={() => act(() => D.crearReq({ hito_id: h.id, nombre: 'Nuevo requerimiento', inicio: h.inicio, fin: h.fin }))}>+ Requerimiento</button>
     </div>
