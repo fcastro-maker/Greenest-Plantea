@@ -5,17 +5,19 @@ import { TRIMESTRES } from './types'
 import { ESTADOS } from './lib/status'
 import { fmtLargo, hoy as getHoy, toIso } from './lib/dates'
 import { supabase } from './lib/supabase'
-import { cargarAreas, cargarPerfil, cargarPerfiles, cargarProyectos } from './lib/datos'
+import { cargarAreas, cargarPerfil, cargarPerfiles, cargarProyectos, confirmarAlDia } from './lib/datos'
 import Portafolio from './views/Portafolio'
 import Calendario from './views/Calendario'
 import Gestion from './views/Gestion'
 import Usuarios from './views/Usuarios'
+import Resumen from './views/Resumen'
+import Comparativo from './views/Comparativo'
 import Login from './views/Login'
-import { IconCalendario, IconGestion, IconPortafolio, IconSalir, IconUsuarios } from './views/Iconos'
+import { IconCalendario, IconComparativo, IconGestion, IconPortafolio, IconResumen, IconSalir, IconUsuarios } from './views/Iconos'
 
 // Nombre de la plataforma: se cambia solo aquí.
 const NOMBRE = 'Plantea'
-type Vista = 'portafolio' | 'calendario' | 'gestion' | 'usuarios'
+type Vista = 'resumen' | 'portafolio' | 'comparativo' | 'calendario' | 'gestion' | 'usuarios'
 
 export default function App() {
   const [sesion, setSesion] = useState<Session | null>(null)
@@ -31,7 +33,7 @@ export default function App() {
 }
 
 function Plataforma({ userId, correo }: { userId: string; correo: string }) {
-  const [vista, setVista] = useState<Vista>('portafolio')
+  const [vista, setVista] = useState<Vista>('resumen')
   const [area, setArea] = useState('Todas')
   const [trim, setTrim] = useState('Todos')
   const [perfil, setPerfil] = useState<Perfil | null>(null)
@@ -66,14 +68,19 @@ function Plataforma({ userId, correo }: { userId: string; correo: string }) {
   const visibles = proyectos.filter(p => (area === 'Todas' || p.equipo === area) && (trim === 'Todos' || p.trimestre === trim))
   const gerencia = perfil.rol === 'gerencia'
   const menu: { id: Vista; t: string; i: JSX.Element }[] = [
+    { id: 'resumen', t: 'Resumen', i: <IconResumen /> },
     { id: 'portafolio', t: 'Portafolio', i: <IconPortafolio /> },
+    { id: 'comparativo', t: 'Comparativo', i: <IconComparativo /> },
     { id: 'calendario', t: 'Calendario', i: <IconCalendario /> },
     ...(gerencia ? [] : [{ id: 'gestion' as Vista, t: 'Gestión', i: <IconGestion /> }]),
     ...(admin ? [{ id: 'usuarios' as Vista, t: 'Usuarios', i: <IconUsuarios /> }] : []),
   ]
   const rolTexto = admin ? 'Administrador' : gerencia ? 'Gerencia' : 'Área interna'
   const verAreas = admin || gerencia
-  const filtros = vista === 'portafolio' || vista === 'calendario'
+  const filtros = vista !== 'gestion' && vista !== 'usuarios'
+  const conLeyenda = vista === 'portafolio' || vista === 'calendario'
+  const soloArea = proyectos.filter(p => area === 'Todas' || p.equipo === area)
+  const alDia = async (p: Proyecto) => { try { await confirmarAlDia(p.id, p.trimestre); await recargar(); setAviso(`“${p.nombre}” marcado al día`) } catch (e) { setAviso((e as Error).message) } }
   const miArea = areas.find(a => a.id === perfil.area_id)?.nombre
 
   return (
@@ -107,16 +114,22 @@ function Plataforma({ userId, correo }: { userId: string; correo: string }) {
                 <select value={area} onChange={e => setArea(e.target.value)}>{['Todas', ...areas.map(a => a.nombre)].map(e => <option key={e}>{e}</option>)}</select>
               </label>
             )}
-            <label>Trimestre
-              <select value={trim} onChange={e => setTrim(e.target.value)}>{['Todos', ...TRIMESTRES.map(t => t.id)].map(e => <option key={e}>{e}</option>)}</select>
-            </label>
-            <ul className="legend" aria-label="Leyenda de estados">
-              {ESTADOS.map(e => <li key={e.id}><i className={`dot ${e.id}`} />{e.label}</li>)}
-            </ul>
+            {vista !== 'comparativo' && (
+              <label>Trimestre
+                <select value={trim} onChange={e => setTrim(e.target.value)}>{['Todos', ...TRIMESTRES.map(t => t.id)].map(e => <option key={e}>{e}</option>)}</select>
+              </label>
+            )}
+            {conLeyenda && (
+              <ul className="legend" aria-label="Leyenda de estados">
+                {ESTADOS.map(e => <li key={e.id}><i className={`dot ${e.id}`} />{e.label}</li>)}
+              </ul>
+            )}
           </div>
         )}
 
       <main>
+        {vista === 'resumen' && <Resumen proyectos={visibles} areas={areas} perfil={perfil} hoy={hoy} alDia={alDia} />}
+        {vista === 'comparativo' && <Comparativo proyectos={soloArea} areas={areas} hoy={hoy} verAreas={verAreas} />}
         {vista === 'portafolio' && <Portafolio proyectos={visibles} trimestres={TRIMESTRES} hoy={hoy} />}
         {vista === 'calendario' && <Calendario proyectos={visibles} hoy={hoy} />}
         {vista === 'gestion' && <Gestion proyectos={proyectos} areas={areas} perfil={perfil} recargar={recargar} error={setAviso} />}
