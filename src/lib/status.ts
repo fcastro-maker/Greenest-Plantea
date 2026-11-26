@@ -39,12 +39,23 @@ function calc(inicio: string, fin: string, avance: number | null, hoy: Date): Es
   }
   return 'en-curso'
 }
+const hitoAbierto = (h: Hito) => h.hecho !== true && hitoAvance(h) !== 100
+/** Hitos bloqueados que siguen sin terminar */
+export const bloqueos = (p: Proyecto) => p.hitos.filter(h => h.bloqueado && hitoAbierto(h))
+/** Proyectos de los que depende que están atrasados o bloqueados */
+export const dependenciasEnRiesgo = (p: Proyecto) => (p.depende ?? []).filter(d => !d.completado && (d.atrasado || d.bloqueado))
+
 export function estadoProyecto(p: Proyecto, hoy: Date): Estado {
   const r = rango(p)
   if (!r) return 'por-programar'
-  return calc(r.inicio, r.fin, proyAvance(p), hoy)
+  const base = calc(r.inicio, r.fin, proyAvance(p), hoy)
+  // Un bloqueo o una dependencia en problemas pone en riesgo lo que iba bien
+  if ((base === 'en-curso' || base === 'por-iniciar') && (bloqueos(p).length || dependenciasEnRiesgo(p).length)) return 'en-riesgo'
+  return base
 }
 export function estadoHito(h: Hito, hoy: Date): Estado {
   if (!h.inicio || !h.fin) return 'por-programar'
-  return calc(h.inicio, h.fin, hitoAvance(h), hoy)
+  const base = calc(h.inicio, h.fin, hitoAvance(h), hoy)
+  if (h.bloqueado && hitoAbierto(h) && (base === 'en-curso' || base === 'por-iniciar')) return 'en-riesgo'
+  return base
 }
