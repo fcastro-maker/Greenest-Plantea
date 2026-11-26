@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import type { Area, Perfil, Proyecto } from '../types'
+import { TRIMESTRES } from '../types'
 import { fmt, fmtLargo, relativo, toIso } from '../lib/dates'
-import { label } from '../lib/status'
+import { ESTADOS, label } from '../lib/status'
 import { textoActualizacion } from '../lib/actualizacion'
+import type { Fila } from '../lib/resumen'
 import { contar, DIAS_PROXIMOS, DIAS_SIN_ACTUALIZAR, filas, proximosHitos, requerimientosPendientes, requierenAtencion, sinActualizar } from '../lib/resumen'
 import { descargarCsv, imprimir } from '../lib/exportar'
 
@@ -21,6 +23,35 @@ function Lista<T>({ items, vacio, fila, max = 6 }: { items: T[]; vacio: string; 
       <ul className="res-lista">{ver.map(fila)}</ul>
       {items.length > max && <button className="link" onClick={() => setTodo(!todo)}>{todo ? 'Ver menos' : `Ver ${items.length - max} más`}</button>}
     </>
+  )
+}
+
+/** Estado de los proyectos (barra apilada) y carga por trimestre. Sin librerías: divs con tooltip nativo */
+function Graficos({ fs }: { fs: Fila[] }) {
+  if (!fs.length) return null
+  const por = ESTADOS.map(e => ({ ...e, n: fs.filter(f => f.estado === e.id).length })).filter(x => x.n > 0)
+  const qs = TRIMESTRES.map(t => ({ id: t.id, n: fs.filter(f => f.p.trimestre === t.id).length }))
+  const max = Math.max(1, ...qs.map(q => q.n))
+  return (
+    <div className="res-cols graf">
+      <div>
+        <h3>Estado de los proyectos</h3>
+        <div className="apilada" role="img" aria-label={por.map(x => `${x.label}: ${x.n}`).join(', ')}>
+          {por.map(x => <i key={x.id} className={x.id} style={{ flex: x.n }} title={`${x.label}: ${x.n}`} />)}
+        </div>
+        <ul className="leyenda">{por.map(x => <li key={x.id}><i className={`dot ${x.id}`} />{x.label} <b>{x.n}</b></li>)}</ul>
+      </div>
+      <div>
+        <h3>Proyectos por trimestre</h3>
+        <ul className="barras">
+          {qs.map(q => (
+            <li key={q.id} title={`${q.id}: ${q.n} proyecto(s)`}>
+              <span>{q.id}</span><span className="pista"><i style={{ width: `${(q.n / max) * 100}%` }} /></span><b>{q.n}</b>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   )
 }
 
@@ -63,6 +94,8 @@ export default function Resumen({ proyectos, areas, perfil, hoy, alDia }: Props)
         <span><b>{c.completado}</b> completados</span>
         <span>Avance promedio <b>{c.avance === null ? '—' : `${c.avance}%`}</b></span>
       </p>
+
+      <Graficos fs={fs} />
 
       {verAreas ? (
         <>
