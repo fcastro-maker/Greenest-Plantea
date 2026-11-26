@@ -1,0 +1,22 @@
+/* Bloqueos, dependencias, historial, duplicar e importar */
+.bloque-ed { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); }
+.bloque-ed h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--brand-dark); }
+.bloque-ed select { max-width: 100%; }
+.deps, .hist, .prev { list-style: none; margin: 0 0 8px; padding: 0; }
+.deps li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--soft); }
+.hist li { display: grid; gap: 1px; padding: 7px 0; border-bottom: 1px solid var(--soft); }
+.mot { color: var(--en-riesgo); }
+.hito-ed .bloqueo { display: flex; align-items: center; gap: 8px; margin: 4px 0 2px 2px; color: var(--en-riesgo); }
+.hito-ed .bloqueo input[type=text], .hito-ed .bloqueo .mot-in { flex: 1; }
+.hito-ed.bloqueado { border-left: 3px solid var(--en-riesgo); }
+.duplicar { display: grid; gap: 8px; max-width: 460px; padding: 12px 0; }
+.acciones.izq { justify-content: flex-start; gap: 10px; align-items: center; }
+.archivo { display: inline-block; border: 1px dashed var(--brand); border-radius: 8px; padding: 6px 12px; color: var(--brand-dark); cursor: pointer; font-weight: 600; }
+.archivo input { display: none; }
+.errores { background: #FBEDE9; border-radius: 10px; padding: 10px 14px; color: #7A2E20; }
+.errores ul { margin: 6px 0 0; padding-left: 18px; }
+.prev li { padding: 3px 0; }
+.res-tabla tr.sin-resp td:first-child { color: var(--en-riesgo); font-weight: 600; }
+.res-tabla tr.detalle td { background: var(--bg); padding: 4px 14px 10px; }
+.nota-pie { color: var(--muted); font-size: 12.5px; margin-top: 18px; }
+.res-lista .mot-linea { display: block; color: var(--en-riesgo); font-size: 12px; }
