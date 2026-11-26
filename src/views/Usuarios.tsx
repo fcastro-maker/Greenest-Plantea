@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Area, Perfil, Rol } from '../types'
+import { ROLES } from '../types'
 import { actualizarPerfil, crearArea } from '../lib/datos'
 
 interface Props { perfiles: Perfil[]; areas: Area[]; yo: string; recargar: () => Promise<void>; error: (s: string) => void }
@@ -26,7 +27,7 @@ export default function Usuarios({ perfiles, areas, yo, recargar, error }: Props
                 </td>
                 <td>
                   <select value={p.rol} disabled={p.id === yo} onChange={e => act(() => actualizarPerfil(p.id, { rol: e.target.value as Rol }))}>
-                    <option value="editor">Editor (su área)</option><option value="lector">Solo lectura</option><option value="admin">Administrador</option>
+                    {ROLES.map(r => <option key={r.id} value={r.id}>{r.t}</option>)}
                   </select>
                 </td>
                 <td><input type="checkbox" checked={p.activo} disabled={p.id === yo} onChange={e => act(() => actualizarPerfil(p.id, { activo: e.target.checked }))} aria-label={`Activo: ${p.correo}`} /></td>
