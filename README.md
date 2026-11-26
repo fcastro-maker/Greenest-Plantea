@@ -24,8 +24,6 @@ Todo el contenido está en `src/data/portfolio.json`:
 
 El estado de cada proyecto e hito se calcula solo: completado, en curso, en riesgo (avance 20 puntos o más por debajo de lo esperado), atrasado (pasó su fecha sin terminar), por iniciar o sin fecha.
 
-`scripts/gen_data.py` genera los datos de la migración a Microsoft 365 desde el Excel de cronograma; no hace falta volver a correrlo si se edita el JSON a mano.
-
 ## Nombre y colores
 
 - El nombre de la plataforma está en `src/App.tsx` (constante `NOMBRE`).
@@ -33,4 +31,4 @@ El estado de cada proyecto e hito se calcula solo: completado, en curso, en ries
 
 ## Publicación
 
-El flujo `.github/workflows/pages.yml` publica en GitHub Pages en cada push a `main` (hay que activar Pages con origen "GitHub Actions" en la configuración del repositorio).
+Cuando exista el flujo `.github/workflows/pages.yml`, se publica en GitHub Pages en cada push a `main` (hay que activar Pages con origen "GitHub Actions" en la configuración del repositorio).
