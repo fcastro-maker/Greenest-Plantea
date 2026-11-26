@@ -1,0 +1,271 @@
+{
+ "actualizado": "2026-11-26",
+ "trimestres": [
+  { "id": "Q0", "inicio": "2026-11-23", "fin": "2026-12-22" },
+  { "id": "Q1", "inicio": "2027-01-04", "fin": "2027-03-26" },
+  { "id": "Q2", "inicio": "2027-04-05", "fin": "2027-06-25" },
+  { "id": "Q3", "inicio": "2027-07-05", "fin": "2027-09-24" },
+  { "id": "Q4", "inicio": "2027-10-04", "fin": "2027-12-24" }
+ ],
+ "proyectos": [
+  {
+   "id": "plat", "nombre": "Plataforma de gestión del portafolio", "equipo": "TI", "resp": "Fabi", "alcance": "Interno", "trimestre": "Q0",
+   "nota": "Prototipo rápido; después se evalúa pasarlo a Planner dentro de Outlook.",
+   "hitos": [
+    { "id": "plat-h0", "nombre": "Demo a Freddy", "inicio": "2026-11-26", "fin": "2026-11-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "web", "nombre": "Web: dejarla estable y traspasar", "equipo": "TI", "resp": "Fabi", "alcance": "Externo", "trimestre": "Q0",
+   "nota": "Traspaso a las personas involucradas en la web.",
+   "hitos": [
+    { "id": "web-h0", "nombre": "Traspaso a las personas de la web", "inicio": "2026-11-23", "fin": "2026-12-04", "reqs": [] }
+   ]
+  },
+  {
+   "id": "seg", "nombre": "Seguridad: llaves y certificados expuestos", "equipo": "TI", "resp": "Omar", "alcance": "Interno", "trimestre": "Q0",
+   "nota": "Carril rápido. Fechas propuestas, por confirmar.",
+   "hitos": [
+    { "id": "seg-h0", "nombre": "Llaves y certificados resueltos", "inicio": "2026-11-25", "fin": "2026-12-11", "reqs": [] }
+   ]
+  },
+  {
+   "id": "intake", "nombre": "Planificación por equipos e intake del Q1", "equipo": "TI", "resp": "Fabi", "alcance": "Interno", "trimestre": "Q0",
+   "nota": "Cada equipo presenta su plan y entrega su planificación cerrada. El trabajo operativo termina el 22 de diciembre.",
+   "hitos": [
+    {
+     "id": "intake-h0", "nombre": "Equipos presentan plan y backlog a TI", "inicio": "2026-11-30", "fin": "2026-12-11",
+     "reqs": [
+      { "id": "i-r0", "nombre": "Comercial: presentar su plan y backlog", "resp": "", "inicio": "2026-11-30", "fin": "2026-12-11", "hecho": false },
+      { "id": "i-r1", "nombre": "Certificaciones: presentar su plan y backlog", "resp": "", "inicio": "2026-11-30", "fin": "2026-12-11", "hecho": false },
+      { "id": "i-r2", "nombre": "Web y SEO: presentar su plan y backlog", "resp": "Yves", "inicio": "2026-11-30", "fin": "2026-12-11", "hecho": false }
+     ]
+    },
+    {
+     "id": "intake-h1", "nombre": "Equipos entregan planificación, objetivos y métricas", "inicio": "2026-12-14", "fin": "2026-12-31",
+     "reqs": [
+      { "id": "i-s0", "nombre": "Comercial: entregar planificación, objetivos y métricas", "resp": "", "inicio": "2026-12-14", "fin": "2026-12-31", "hecho": false },
+      { "id": "i-s1", "nombre": "Certificaciones: entregar planificación, objetivos y métricas", "resp": "", "inicio": "2026-12-14", "fin": "2026-12-31", "hecho": false },
+      { "id": "i-s2", "nombre": "Web y SEO: entregar planificación, objetivos y métricas", "resp": "Yves", "inicio": "2026-12-14", "fin": "2026-12-31", "hecho": false }
+     ]
+    },
+    { "id": "intake-h2", "nombre": "Intake del Q1 cerrado", "inicio": "2026-12-14", "fin": "2026-12-22", "reqs": [] }
+   ]
+  },
+  {
+   "id": "mcp", "nombre": "MCP de Green Initiative (módulo WordPress)", "equipo": "TI", "resp": "Fabi", "alcance": "Interno", "trimestre": "Q0", "sinFechas": true,
+   "nota": "Primera versión lista para pruebas en staging. Falta programarla.",
+   "hitos": [
+    { "id": "mcp-h0", "nombre": "Primera versión probada en staging", "inicio": "", "fin": "", "reqs": [] }
+   ]
+  },
+  {
+   "id": "mig", "nombre": "Migración a Microsoft 365", "equipo": "TI", "resp": "Omar y Fabi", "alcance": "Interno", "trimestre": "Q0–Q3",
+   "nota": "14 cuentas en 4 olas. Google vence el 29 de agosto de 2027; las licencias de Microsoft se suman con cada ola.",
+   "hitos": [
+    {
+     "id": "mig-h0", "nombre": "Fase 0 · Preparación", "inicio": "2026-12-01", "fin": "2026-12-18",
+     "reqs": [
+      { "id": "mig-r1", "nombre": "Confirmar las 14 cuentas y quién va en cada ola", "resp": "Omar", "inicio": "2026-12-01", "fin": "2026-12-11", "hecho": false },
+      { "id": "mig-r2", "nombre": "Listar alias, grupos de correo, calendarios y carpetas compartidas", "resp": "Fabi", "inicio": "2026-12-01", "fin": "2026-12-09", "hecho": false },
+      { "id": "mig-r4", "nombre": "Cambiar la renovación de Google a plan flexible", "resp": "Omar", "inicio": "2026-12-01", "fin": "2026-12-04", "hecho": false },
+      { "id": "mig-r3", "nombre": "Decidir qué hacer con las cuentas de Google que no pasan", "resp": "Omar", "inicio": "2026-12-07", "fin": "2026-12-11", "hecho": false },
+      { "id": "mig-r5", "nombre": "Listar lo que no se migra solo (formularios, automatizaciones, sitios, apps con login de Google)", "resp": "Fabi", "inicio": "2026-12-07", "fin": "2026-12-14", "hecho": false },
+      { "id": "mig-r6", "nombre": "Bajar el TTL del DNS del dominio a 5 minutos", "resp": "Fabi", "inicio": "2026-12-14", "fin": "2026-12-14", "hecho": false },
+      { "id": "mig-r7", "nombre": "Comunicar al equipo el plan, las olas y las fechas", "resp": "Omar", "inicio": "2026-12-18", "fin": "2026-12-18", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h1", "nombre": "Fase 1 · Configurar Microsoft 365", "inicio": "2026-12-21", "fin": "2026-12-23",
+     "reqs": [
+      { "id": "mig-r8", "nombre": "Contratar Business Standard (4 licencias, mes de prueba) y crear cuenta administradora", "resp": "Omar", "inicio": "2026-12-21", "fin": "2026-12-21", "hecho": false },
+      { "id": "mig-r9", "nombre": "Verificar greeninitiative.eco con registro TXT (sin tocar MX)", "resp": "Omar", "inicio": "2026-12-21", "fin": "2026-12-21", "hecho": false },
+      { "id": "mig-r15", "nombre": "Crear estructura de Teams y SharePoint (un equipo por área)", "resp": "Fabi", "inicio": "2026-12-21", "fin": "2026-12-23", "hecho": false },
+      { "id": "mig-r10", "nombre": "Activar MFA y seguridad predeterminada", "resp": "Omar", "inicio": "2026-12-22", "fin": "2026-12-22", "hecho": false },
+      { "id": "mig-r11", "nombre": "Actualizar SPF (Google + Microsoft) y activar DKIM en Microsoft", "resp": "Fabi", "inicio": "2026-12-22", "fin": "2026-12-22", "hecho": false },
+      { "id": "mig-r12", "nombre": "Crear los 4 usuarios del piloto", "resp": "Omar", "inicio": "2026-12-22", "fin": "2026-12-22", "hecho": false },
+      { "id": "mig-r13", "nombre": "Configurar en Google el reenvío del correo de los usuarios migrados", "resp": "Fabi", "inicio": "2026-12-23", "fin": "2026-12-23", "hecho": false },
+      { "id": "mig-r14", "nombre": "Instalar en Google las apps que pide la herramienta de migración", "resp": "Omar", "inicio": "2026-12-23", "fin": "2026-12-23", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h2", "nombre": "Ola 1 · Piloto (4 cuentas)", "inicio": "2026-12-28", "fin": "2026-12-31",
+     "reqs": [
+      { "id": "mig-r16", "nombre": "Migrar correo, calendario y contactos", "resp": "Omar", "inicio": "2026-12-28", "fin": "2026-12-29", "hecho": false },
+      { "id": "mig-r17", "nombre": "Copiar Drive personal a OneDrive", "resp": "Fabi", "inicio": "2026-12-28", "fin": "2026-12-30", "hecho": false },
+      { "id": "mig-r20", "nombre": "Registrar los problemas encontrados", "resp": "Fabi", "inicio": "2026-12-28", "fin": "2026-12-31", "hecho": false },
+      { "id": "mig-r18", "nombre": "Instalar Outlook, Teams y OneDrive en computadora y celular", "resp": "Fabi", "inicio": "2026-12-29", "fin": "2026-12-30", "hecho": false },
+      { "id": "mig-r100", "nombre": "Pasar la carpeta compartida de TI a SharePoint (solo esa) y comprobar que todos trabajan desde ahí", "resp": "Fabi", "inicio": "2026-12-29", "fin": "2026-12-30", "hecho": false },
+      { "id": "mig-r19", "nombre": "Pruebas: reenvío de Google a Outlook, correo externo, Teams y archivos", "resp": "Omar y Fabi", "inicio": "2026-12-30", "fin": "2026-12-31", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h3", "nombre": "Ajustes del piloto y guías", "inicio": "2027-01-04", "fin": "2027-02-26",
+     "reqs": [
+      { "id": "mig-r21", "nombre": "Resolver los problemas del piloto", "resp": "Omar y Fabi", "inicio": "2027-01-04", "fin": "2027-01-29", "hecho": false },
+      { "id": "mig-r22", "nombre": "Guía de una página para el equipo (Outlook, Teams, OneDrive)", "resp": "Fabi", "inicio": "2027-01-11", "fin": "2027-01-29", "hecho": false },
+      { "id": "mig-r23", "nombre": "Rehacer formularios y automatizaciones (Forms, Power Automate)", "resp": "Fabi", "inicio": "2027-02-01", "fin": "2027-02-26", "hecho": false },
+      { "id": "mig-r24", "nombre": "Confirmar los grupos de las olas 2, 3 y 4", "resp": "Omar", "inicio": "2027-02-01", "fin": "2027-02-15", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h4", "nombre": "Ola 2 · Área técnica (4 cuentas)", "inicio": "2027-02-22", "fin": "2027-03-12",
+     "reqs": [
+      { "id": "mig-r25", "nombre": "Avisar al grupo con la fecha y la guía", "resp": "Omar", "inicio": "2027-02-22", "fin": "2027-02-22", "hecho": false },
+      { "id": "mig-r26", "nombre": "Sumar licencias y crear los usuarios", "resp": "Omar", "inicio": "2027-02-22", "fin": "2027-02-26", "hecho": false },
+      { "id": "mig-r27", "nombre": "Configurar el reenvío de su correo", "resp": "Fabi", "inicio": "2027-02-26", "fin": "2027-02-26", "hecho": false },
+      { "id": "mig-r28", "nombre": "Migrar correo, calendario y contactos", "resp": "Omar", "inicio": "2027-03-01", "fin": "2027-03-05", "hecho": false },
+      { "id": "mig-r29", "nombre": "Copiar Drive personal a OneDrive y pasar completa la carpeta compartida del área a SharePoint", "resp": "Fabi", "inicio": "2027-03-01", "fin": "2027-03-05", "hecho": false },
+      { "id": "mig-r30", "nombre": "Configurar dispositivos y sesión corta de 30 minutos", "resp": "Fabi", "inicio": "2027-03-03", "fin": "2027-03-05", "hecho": false },
+      { "id": "mig-r31", "nombre": "Sincronización final de correo y archivos", "resp": "Omar", "inicio": "2027-03-08", "fin": "2027-03-10", "hecho": false },
+      { "id": "mig-r32", "nombre": "Soporte y revisión de pendientes", "resp": "Fabi", "inicio": "2027-03-08", "fin": "2027-03-12", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h5", "nombre": "Ola 3 (3 cuentas)", "inicio": "2027-04-26", "fin": "2027-05-14",
+     "reqs": [
+      { "id": "mig-r33", "nombre": "Avisar al grupo con la fecha y la guía", "resp": "Omar", "inicio": "2027-04-26", "fin": "2027-04-26", "hecho": false },
+      { "id": "mig-r34", "nombre": "Copiar Drive personal a OneDrive y pasar completa la carpeta compartida del área a SharePoint", "resp": "Omar", "inicio": "2027-04-26", "fin": "2027-04-30", "hecho": false },
+      { "id": "mig-r35", "nombre": "Configurar el reenvío de su correo", "resp": "Fabi", "inicio": "2027-04-30", "fin": "2027-04-30", "hecho": false },
+      { "id": "mig-r36", "nombre": "Migrar correo, calendario y contactos", "resp": "Omar", "inicio": "2027-05-03", "fin": "2027-05-07", "hecho": false },
+      { "id": "mig-r37", "nombre": "Copiar Drive personal a OneDrive y pasar completa la carpeta compartida del área a SharePoint", "resp": "Fabi", "inicio": "2027-05-03", "fin": "2027-05-07", "hecho": false },
+      { "id": "mig-r38", "nombre": "Configurar dispositivos y sesión corta de 30 minutos", "resp": "Fabi", "inicio": "2027-05-05", "fin": "2027-05-07", "hecho": false },
+      { "id": "mig-r39", "nombre": "Sincronización final de correo y archivos", "resp": "Omar", "inicio": "2027-05-10", "fin": "2027-05-12", "hecho": false },
+      { "id": "mig-r40", "nombre": "Soporte y revisión de pendientes", "resp": "Fabi", "inicio": "2027-05-10", "fin": "2027-05-14", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h6", "nombre": "Cambio del correo del dominio a Microsoft", "inicio": "2027-05-15", "fin": "2027-05-17",
+     "reqs": [
+      { "id": "mig-r41", "nombre": "Cambiar registros MX y Autodiscover a Microsoft", "resp": "Omar", "inicio": "2027-05-15", "fin": "2027-05-15", "hecho": false },
+      { "id": "mig-r42", "nombre": "Invertir el reenvío: Microsoft reenvía a Google las cuentas que faltan", "resp": "Fabi", "inicio": "2027-05-15", "fin": "2027-05-15", "hecho": false },
+      { "id": "mig-r44", "nombre": "Dejar el SPF con Google y Microsoft (se mantiene hasta agosto)", "resp": "Fabi", "inicio": "2027-05-15", "fin": "2027-05-17", "hecho": false },
+      { "id": "mig-r43", "nombre": "Verificar que llega correo externo a todos", "resp": "Omar y Fabi", "inicio": "2027-05-17", "fin": "2027-05-17", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h7", "nombre": "Ola 4 · Cuentas opcionales (3)", "inicio": "2027-07-26", "fin": "2027-08-13",
+     "reqs": [
+      { "id": "mig-r45", "nombre": "Avisar al grupo con la fecha y la guía", "resp": "Omar", "inicio": "2027-07-26", "fin": "2027-07-26", "hecho": false },
+      { "id": "mig-r46", "nombre": "Sumar licencias y crear los usuarios", "resp": "Omar", "inicio": "2027-07-26", "fin": "2027-07-30", "hecho": false },
+      { "id": "mig-r47", "nombre": "Configurar el reenvío de su correo", "resp": "Fabi", "inicio": "2027-07-30", "fin": "2027-07-30", "hecho": false },
+      { "id": "mig-r48", "nombre": "Migrar correo, calendario y contactos", "resp": "Omar", "inicio": "2027-08-02", "fin": "2027-08-06", "hecho": false },
+      { "id": "mig-r49", "nombre": "Copiar Drive personal a OneDrive y pasar completa la carpeta compartida del área a SharePoint", "resp": "Fabi", "inicio": "2027-08-02", "fin": "2027-08-06", "hecho": false },
+      { "id": "mig-r50", "nombre": "Configurar dispositivos y sesión corta de 30 minutos", "resp": "Fabi", "inicio": "2027-08-04", "fin": "2027-08-06", "hecho": false },
+      { "id": "mig-r51", "nombre": "Sincronización final de correo y archivos", "resp": "Omar", "inicio": "2027-08-09", "fin": "2027-08-11", "hecho": false },
+      { "id": "mig-r52", "nombre": "Soporte y revisión de pendientes", "resp": "Fabi", "inicio": "2027-08-09", "fin": "2027-08-13", "hecho": false }
+     ]
+    },
+    {
+     "id": "mig-h8", "nombre": "Respaldo, revisión y cierre de Google", "inicio": "2027-08-16", "fin": "2027-09-03",
+     "reqs": [
+      { "id": "mig-r53", "nombre": "Respaldo con Google Takeout de las cuentas que no pasan y copia final", "resp": "Fabi", "inicio": "2027-08-16", "fin": "2027-08-20", "hecho": false },
+      { "id": "mig-r54", "nombre": "Confirmar que nadie sigue trabajando en Google", "resp": "Omar", "inicio": "2027-08-23", "fin": "2027-08-27", "hecho": false },
+      { "id": "mig-r55", "nombre": "Vence el contrato de Google (29 de agosto)", "resp": "Omar", "inicio": "2027-08-29", "fin": "2027-08-29", "hecho": false },
+      { "id": "mig-r56", "nombre": "Quitar Google del SPF y eliminar los reenvíos", "resp": "Fabi", "inicio": "2027-08-30", "fin": "2027-09-03", "hecho": false }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tracker", "nombre": "Tracker de Forest Friends (MVP)", "equipo": "TI", "resp": "", "alcance": "Externo", "trimestre": "Q1", "provisional": true,
+   "nota": "Propuesta: 8 semanas-persona. Fechas dentro de la ventana del Q1, por validar con Freddy.",
+   "hitos": [
+    { "id": "tracker-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-01-04", "fin": "2027-01-15", "reqs": [] },
+    { "id": "tracker-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-01-15", "fin": "2027-02-12", "reqs": [] },
+    { "id": "tracker-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-02-12", "fin": "2027-03-12", "reqs": [] },
+    { "id": "tracker-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-03-12", "fin": "2027-03-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "ffaud", "nombre": "Auditoría de Forest Friends", "equipo": "TI", "resp": "", "alcance": "Externo", "trimestre": "Q1", "provisional": true,
+   "nota": "Propuesta: 6 semanas-persona. Fechas dentro de la ventana del Q1, por validar con Freddy.",
+   "hitos": [
+    { "id": "ffaud-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-01-04", "fin": "2027-01-15", "reqs": [] },
+    { "id": "ffaud-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-01-15", "fin": "2027-02-12", "reqs": [] },
+    { "id": "ffaud-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-02-12", "fin": "2027-03-12", "reqs": [] },
+    { "id": "ffaud-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-03-12", "fin": "2027-03-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "greenia-diag", "nombre": "Diagnóstico de Greenia y plan hasta fin de 2027", "equipo": "TI", "resp": "", "alcance": "Externo", "trimestre": "Q1", "provisional": true,
+   "nota": "Pedido de Fred (24 nov): ver cómo está Greenia y hacia dónde llevarla en los primeros meses.",
+   "hitos": [
+    { "id": "greenia-diag-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-01-04", "fin": "2027-01-15", "reqs": [] },
+    { "id": "greenia-diag-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-01-15", "fin": "2027-02-12", "reqs": [] },
+    { "id": "greenia-diag-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-02-12", "fin": "2027-03-12", "reqs": [] },
+    { "id": "greenia-diag-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-03-12", "fin": "2027-03-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "seo", "nombre": "SEO: contenido y backlinks para subir el ranking", "equipo": "Web y SEO", "resp": "Yves", "alcance": "Externo", "trimestre": "Q1", "provisional": true,
+   "nota": "Expectativa de Yves. Por definir con el equipo.",
+   "hitos": [
+    { "id": "seo-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-01-04", "fin": "2027-01-15", "reqs": [] },
+    { "id": "seo-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-01-15", "fin": "2027-02-12", "reqs": [] },
+    { "id": "seo-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-02-12", "fin": "2027-03-12", "reqs": [] },
+    { "id": "seo-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-03-12", "fin": "2027-03-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "com", "nombre": "Objetivos y métricas de venta de Greenia y Forest Friends", "equipo": "Comercial", "resp": "", "alcance": "Externo", "trimestre": "Q1", "provisional": true,
+   "nota": "Por definir con el área comercial.",
+   "hitos": [
+    { "id": "com-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-01-04", "fin": "2027-01-15", "reqs": [] },
+    { "id": "com-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-01-15", "fin": "2027-02-12", "reqs": [] },
+    { "id": "com-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-02-12", "fin": "2027-03-12", "reqs": [] },
+    { "id": "com-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-03-12", "fin": "2027-03-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "cert", "nombre": "Plan de certificaciones 2027", "equipo": "Certificaciones", "resp": "", "alcance": "Externo", "trimestre": "Q1", "provisional": true,
+   "nota": "Por definir con el equipo.",
+   "hitos": [
+    { "id": "cert-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-01-04", "fin": "2027-01-15", "reqs": [] },
+    { "id": "cert-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-01-15", "fin": "2027-02-12", "reqs": [] },
+    { "id": "cert-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-02-12", "fin": "2027-03-12", "reqs": [] },
+    { "id": "cert-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-03-12", "fin": "2027-03-26", "reqs": [] }
+   ]
+  },
+  {
+   "id": "greenia", "nombre": "Greenia estable", "equipo": "TI", "resp": "", "alcance": "Externo", "trimestre": "Q2", "provisional": true,
+   "nota": "Propuesta: 4 semanas-persona. Puede cambiar con el diagnóstico.",
+   "hitos": [
+    { "id": "greenia-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-04-05", "fin": "2027-04-16", "reqs": [] },
+    { "id": "greenia-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-04-16", "fin": "2027-05-14", "reqs": [] },
+    { "id": "greenia-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-05-14", "fin": "2027-06-11", "reqs": [] },
+    { "id": "greenia-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-06-11", "fin": "2027-06-25", "reqs": [] }
+   ]
+  },
+  {
+   "id": "pg", "nombre": "Migración a PostgreSQL", "equipo": "TI", "resp": "", "alcance": "Interno", "trimestre": "Q2", "provisional": true,
+   "nota": "Propuesta: 8 semanas-persona.",
+   "hitos": [
+    { "id": "pg-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-04-05", "fin": "2027-04-16", "reqs": [] },
+    { "id": "pg-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-04-16", "fin": "2027-05-14", "reqs": [] },
+    { "id": "pg-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-05-14", "fin": "2027-06-11", "reqs": [] },
+    { "id": "pg-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-06-11", "fin": "2027-06-25", "reqs": [] }
+   ]
+  },
+  {
+   "id": "cma", "nombre": "CMA v1", "equipo": "TI", "resp": "", "alcance": "Externo", "trimestre": "Q3", "provisional": true,
+   "nota": "Propuesta: 10 semanas-persona.",
+   "hitos": [
+    { "id": "cma-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-07-05", "fin": "2027-07-16", "reqs": [] },
+    { "id": "cma-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-07-16", "fin": "2027-08-13", "reqs": [] },
+    { "id": "cma-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-08-13", "fin": "2027-09-10", "reqs": [] },
+    { "id": "cma-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-09-10", "fin": "2027-09-24", "reqs": [] }
+   ]
+  },
+  {
+   "id": "bio", "nombre": "BiomassApp", "equipo": "TI", "resp": "", "alcance": "Externo", "trimestre": "Q4", "provisional": true,
+   "nota": "Propuesta: 7 a 10 semanas-persona.",
+   "hitos": [
+    { "id": "bio-h0", "nombre": "EPOC aprobado y alcance congelado", "inicio": "2027-10-04", "fin": "2027-10-15", "reqs": [] },
+    { "id": "bio-h1", "nombre": "Checkpoint de mitad de tiempo", "inicio": "2027-10-15", "fin": "2027-11-12", "reqs": [] },
+    { "id": "bio-h2", "nombre": "Pre-lanzamiento (1 semana antes)", "inicio": "2027-11-12", "fin": "2027-12-10", "reqs": [] },
+    { "id": "bio-h3", "nombre": "Entrega y cierre con libro de beneficios", "inicio": "2027-12-10", "fin": "2027-12-24", "reqs": [] }
+   ]
+  }
+ ]
+}
